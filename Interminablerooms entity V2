@@ -1,5 +1,5 @@
 -- ==========================================================
--- SCRIPT C-25 - PARTE 1: CORE DE LA ENTIDAD Y GLITCH VISUAL
+-- SCRIPT GOD - PARTE 1: CORE DE LA ENTIDAD Y GLITCH VISUAL
 -- ==========================================================
 local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
@@ -15,8 +15,10 @@ end
 
 local entidadPrevia = workspace:FindFirstChild("IA_Rush_B35")
 if entidadPrevia then entidadPrevia:Destroy() end
-local entidadPrevia2 = workspace:FindFirstChild("IA_C25")
+local entidadPrevia2 = workspace:FindFirstChild("IA_God")
 if entidadPrevia2 then entidadPrevia2:Destroy() end
+local entidadPrevia3 = workspace:FindFirstChild("IA_C25")
+if entidadPrevia3 then entidadPrevia3:Destroy() end
 
 local sala1 = currentRooms:FindFirstChild("0") or currentRooms:FindFirstChild("1")
 local puertaSpawn = sala1 and (sala1:FindFirstChild("Door") or sala1:FindFirstChild("DoorPlatform"))
@@ -26,7 +28,7 @@ end
 local posicionSpawn = puertaSpawn and puertaSpawn.CFrame or CFrame.new(0, 5, 0)
 
 local entidad = Instance.new("Part")
-entidad.Name = "IA_C25"
+entidad.Name = "IA_God"
 entidad.Size = TAMANO_ENTIDAD
 entidad.Transparency = 1
 entidad.Anchored = true
@@ -45,16 +47,15 @@ decalFrente.Texture = TEXTURA_ID; decalFrente.Face = Enum.NormalId.Front; decalF
 local decalAtras = Instance.new("Decal")
 decalAtras.Texture = TEXTURA_ID; decalAtras.Face = Enum.NormalId.Back; decalAtras.Parent = entidad
 
-print("[PARTE 1] Núcleo de C-25 cargado correctamente.")
+print("[PARTE 1] Núcleo de God cargado correctamente.")
 
 local anguloGlitchY = 0
 local offsetGlitchVector = Vector3.new(0, 0, 0)
 
-_G.C25_Shared = {
+_G.God_Shared = {
     Entidad = entidad,
     Angulo = 0,
-    Offset = Vector3.new(0,0,0),
-    TemblorActivo = false
+    Offset = Vector3.new(0,0,0)
 }
 
 task.spawn(function()
@@ -73,7 +74,7 @@ task.spawn(function()
 		if not entidad.Parent then break end; anguloGlitchY = 22
 		task.wait(0.07)
 		if not entidad.Parent then break end; anguloGlitchY = -8
-        if _G.C25_Shared then _G.C25_Shared.Angulo = anguloGlitchY end
+        if _G.God_Shared then _G.God_Shared.Angulo = anguloGlitchY end
 	end
 end)
 
@@ -84,7 +85,7 @@ task.spawn(function()
 		local offsetY = math.random(-3, 3)
 		local offsetZ = math.random(-2, 3)
 		offsetGlitchVector = Vector3.new(offsetX, offsetY, offsetZ)
-		if _G.C25_Shared then _G.C25_Shared.Offset = offsetGlitchVector end
+		if _G.God_Shared then _G.God_Shared.Offset = offsetGlitchVector end
 	end
 end)
 
@@ -131,7 +132,7 @@ task.spawn(function()
 				if escanearSeguridadArmario(personaje) then
 					-- Ok
 				else
-					localPlayer:SetAttribute("AsesinadoPorC25", true)
+					localPlayer:SetAttribute("AsesinadoPorGod", true)
 					task.wait(0.01)
 					hum.Health = 0
 				end
@@ -140,7 +141,7 @@ task.spawn(function()
 	end
 end)
 -- ==========================================================
--- SCRIPT C-25 - PARTE 2: TEMBLOR
+-- SCRIPT GOD - PARTE 2: TEMBLOR (SECRETO HASTA EL SPAWN)
 -- ==========================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -148,18 +149,19 @@ local localPlayer = Players.LocalPlayer
 local Camara = workspace.CurrentCamera
 
 for i = 1, 50 do
-    if _G.C25_Shared and _G.C25_Shared.Entidad then break end
+    if _G.God_Shared and _G.God_Shared.Entidad then break end
     task.wait(0.1)
 end
 
-local entidad = _G.C25_Shared and _G.C25_Shared.Entidad
+local entidad = _G.God_Shared and _G.God_Shared.Entidad
 if not entidad then error("Error: No se enlazó la Parte 1.") end
 
-print("[PARTE 2] Sistema de temblor secreto inyectado.")
+print("[PARTE 2] Sistema de temblor inyectado.")
 
 local conexionTemblor = RunService.RenderStepped:Connect(function()
-    if not _G.C25_Shared or not _G.C25_Shared.TemblorActivo then return end
     if not entidad or not entidad.Parent then return end
+    -- El temblor no suena en el contador, solo se activa cuando God aparece oficialmente
+    if not entidad:GetAttribute("Spawneo") then return end
     
     local personaje = localPlayer.Character
     if personaje and personaje:FindFirstChild("HumanoidRootPart") then
@@ -188,13 +190,13 @@ task.spawn(function()
     if conexionTemblor then conexionTemblor:Disconnect() end
 end)
 -- ==========================================================
--- SCRIPT C-25 - PARTE 3: CONTADOR, MOVIMIENTO Y AUDIO NUEVO
+-- SCRIPT GOD - PARTE 3: CONTADOR, MOVIMIENTO Y AUDIO NUEVO
 -- ==========================================================
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local localPlayer = Players.LocalPlayer
 
-local VELOCIDAD_MODERADA = 700 -- Velocidad máxima de God
+local VELOCIDAD_MODERADA = 800 -- Velocidad extrema para God
 local PASO_TIEMPO = 0.010 
 
 local AUDIO_CONTADOR = "rbxassetid://123103827938201"
@@ -208,18 +210,18 @@ local TEXTURA_LOGRO = "rbxassetid://121167464833272"
 local currentRooms = workspace:FindFirstChild("CurrentRooms")
 if not currentRooms then return end
 
-if not _G.C25_Shared or not _G.C25_Shared.Entidad then
+if not _G.God_Shared or not _G.God_Shared.Entidad then
     error("Error: No se detectó el entorno físico de las fases previas.")
 end
 
-local entidad = _G.C25_Shared.Entidad
+local entidad = _G.God_Shared.Entidad
 
 local function mostrarNotificacionLogro()
     local pGui = localPlayer:FindFirstChild("PlayerGui")
     if not pGui then return end
     
     local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "NotificacionLogroC25"
+    screenGui.Name = "NotificacionLogroGod"
     screenGui.ResetOnSpawn = false
     screenGui.Parent = pGui
     
@@ -317,7 +319,7 @@ task.spawn(function()
     local pGui = localPlayer:WaitForChild("PlayerGui", 5)
 	local contenedorAudio = pGui or workspace.CurrentCamera
 
-    -- Primer contador ajustado a 50 segundos reales por la velocidad 0.1
+    -- 1. Primer sonido ajustado: 5s originales a 0.1x velocidad = 50 segundos exactos
 	local sonidoContador = Instance.new("Sound")
 	sonidoContador.SoundId = AUDIO_CONTADOR
     sonidoContador.Volume = 3
@@ -328,7 +330,7 @@ task.spawn(function()
 	task.wait(50) 
     if sonidoContador then sonidoContador:Destroy() end
 
-    -- Segundo contador ajustado a exactamente 20 segundos reales por la velocidad 0.1
+    -- 2. Segundo sonido ajustado: 2s originales a 0.1x velocidad = 20 segundos exactos
     local sonidoFinal = Instance.new("Sound")
     sonidoFinal.SoundId = AUDIO_FINAL_CONTADOR
     sonidoFinal.Volume = 3
@@ -336,15 +338,12 @@ task.spawn(function()
     sonidoFinal.Parent = contenedorAudio
     sonidoFinal:Play()
 
-    task.wait(20) 
+    task.wait(20) -- Espera exacta para que termine por completo sin cortarse
     if sonidoFinal then sonidoFinal:Destroy() end
 
-    -- ¡Activamos el temblor y el sonido de God al aparecer!
-    if _G.C25_Shared then
-        _G.C25_Shared.TemblorActivo = true
-    end
+    -- 3. Ahora sí aparece oficialmente God (Se activa el temblor y comienza a moverse)
+    entidad:SetAttribute("Spawneo", true)
 
-    -- Sonido de movimiento nuevo en loop
     local sonidoMovimiento = Instance.new("Sound")
     sonidoMovimiento.SoundId = AUDIO_MOVIMIENTO_NUEVO
     sonidoMovimiento.Volume = 3
@@ -352,7 +351,6 @@ task.spawn(function()
     sonidoMovimiento.Parent = contenedorAudio
     sonidoMovimiento:Play()
 
-    -- Aparece la entidad exactamente 2 veces
     for pasada = 1, 2 do
         if not entidad or not entidad.Parent then break end
 
@@ -373,8 +371,8 @@ task.spawn(function()
                 local direccionNormalizada = vectorDireccion.Unit
                 local nuevaPosicion = posicionActual + (direccionNormalizada * avancePorFotograma)
                 
-                local anguloY = _G.C25_Shared and _G.C25_Shared.Angulo or 0
-                local offsetGlitch = _G.C25_Shared and _G.C25_Shared.Offset or Vector3.new(0,0,0)
+                local anguloY = _G.God_Shared and _G.God_Shared.Angulo or 0
+                local offsetGlitch = _G.God_Shared and _G.God_Shared.Offset or Vector3.new(0,0,0)
                 
                 entidad.CFrame = CFrame.lookAt(nuevaPosicion, nuevaPosicion + direccionNormalizada) 
                                  * CFrame.Angles(0, math.rad(anguloY), 0) 
@@ -434,7 +432,7 @@ task.spawn(function()
 
     local personaje = localPlayer.Character
     local humanoid = personaje and personaje:FindFirstChildOfClass("Humanoid")
-    local fueAsesinado = localPlayer:GetAttribute("AsesinadoPorC25")
+    local fueAsesinado = localPlayer:GetAttribute("AsesinadoPorGod")
 
     if humanoid and humanoid.Health > 0 and not fueAsesinado then
         local BadgeService = game:GetService("BadgeService")
@@ -445,6 +443,6 @@ task.spawn(function()
     end
 
     if entidad then entidad:Destroy() end
-    _G.C25_Shared = nil
-    print("[SISTEMA] C-25 (God) completó su recorrido mediante el escaneo de habitaciones y se ha eliminado.")
+    _G.God_Shared = nil
+    print("[SISTEMA] God completó su recorrido y se ha eliminado.")
 end)
