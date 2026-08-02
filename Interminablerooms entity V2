@@ -1,11 +1,11 @@
 -- ==========================================================
--- SCRIPT C-25 - PARTE 1: CORE DE LA ENTIDAD Y GLITCH VISUAL
+-- SCRIPT C-25 (GOD) - PARTE 1: CORE DE LA ENTIDAD Y GLITCH VISUAL
 -- ==========================================================
 local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 local localPlayer = Players.LocalPlayer
 
-local TEXTURA_ID = "rbxassetid://121167464833272" -- Textura nueva actualizada
+local TEXTURA_ID = "rbxassetid://121167464833272"
 local TAMANO_ENTIDAD = Vector3.new(12, 12, 0.2)
 
 local currentRooms = workspace:FindFirstChild("CurrentRooms")
@@ -35,7 +35,7 @@ entidad.CFrame = posicionSpawn * CFrame.new(0, 3, 0)
 entidad.Parent = workspace
 
 local luzEntidad = Instance.new("PointLight")
-luzEntidad.Color = Color3.fromRGB(255, 215, 0) -- Iluminación dorada
+luzEntidad.Color = Color3.fromRGB(255, 215, 0)
 luzEntidad.Range = 35
 luzEntidad.Brightness = 10
 luzEntidad.Parent = entidad
@@ -45,7 +45,7 @@ decalFrente.Texture = TEXTURA_ID; decalFrente.Face = Enum.NormalId.Front; decalF
 local decalAtras = Instance.new("Decal")
 decalAtras.Texture = TEXTURA_ID; decalAtras.Face = Enum.NormalId.Back; decalAtras.Parent = entidad
 
-print("[PARTE 1] Núcleo de C-25 cargado correctamente.")
+print("[PARTE 1] Núcleo de C-25 (God) cargado correctamente.")
 
 local anguloGlitchY = 0
 local offsetGlitchVector = Vector3.new(0, 0, 0)
@@ -53,7 +53,8 @@ local offsetGlitchVector = Vector3.new(0, 0, 0)
 _G.C25_Shared = {
     Entidad = entidad,
     Angulo = 0,
-    Offset = Vector3.new(0,0,0)
+    Offset = Vector3.new(0,0,0),
+    ActivarTemblor = false -- Control para que el temblor inicie solo cuando aparezca la entidad
 }
 
 task.spawn(function()
@@ -139,7 +140,7 @@ task.spawn(function()
 	end
 end)
 -- ==========================================================
--- SCRIPT C-25 - PARTE 2: TEMBLOR
+-- SCRIPT C-25 (GOD) - PARTE 2: TEMBLOR
 -- ==========================================================
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -154,9 +155,10 @@ end
 local entidad = _G.C25_Shared and _G.C25_Shared.Entidad
 if not entidad then error("Error: No se enlazó la Parte 1.") end
 
-print("[PARTE 2] Sistema de temblor inyectado.")
+print("[PARTE 2] Sistema de temblor condicionado inyectado.")
 
 local conexionTemblor = RunService.RenderStepped:Connect(function()
+    if not _G.C25_Shared or not _G.C25_Shared.ActivarTemblor then return end
     if not entidad or not entidad.Parent then return end
     local personaje = localPlayer.Character
     if personaje and personaje:FindFirstChild("HumanoidRootPart") then
@@ -185,13 +187,13 @@ task.spawn(function()
     if conexionTemblor then conexionTemblor:Disconnect() end
 end)
 -- ==========================================================
--- SCRIPT C-25 - PARTE 3: CONTADOR, MOVIMIENTO Y AUDIO NUEVO
+-- SCRIPT C-25 (GOD) - PARTE 3: CONTADOR, MOVIMIENTO Y AUDIO NUEVO
 -- ==========================================================
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local localPlayer = Players.LocalPlayer
 
-local VELOCIDAD_MODERADA = 350 -- Velocidad muy grande y súper veloz
+local VELOCIDAD_MODERADA = 1200 -- Velocidad "God" ultra rápida
 local PASO_TIEMPO = 0.010 
 
 local AUDIO_CONTADOR = "rbxassetid://123103827938201"
@@ -314,7 +316,7 @@ task.spawn(function()
     local pGui = localPlayer:WaitForChild("PlayerGui", 5)
 	local contenedorAudio = pGui or workspace.CurrentCamera
 
-    -- Contador de 55 segundos con el primer sonido a velocidad 0.1
+    -- 1er Audio del contador: 5 segundos originales a velocidad 0.1 duran exactamente 50 segundos
 	local sonidoContador = Instance.new("Sound")
 	sonidoContador.SoundId = AUDIO_CONTADOR
     sonidoContador.Volume = 3
@@ -325,7 +327,7 @@ task.spawn(function()
 	task.wait(50) 
     if sonidoContador then sonidoContador:Destroy() end
 
-    -- Sonido cuando se acaba el contador a velocidad 0.1
+    -- 2do Audio del contador: 5 segundos originales a velocidad 0.1 duran exactamente 50 segundos
     local sonidoFinal = Instance.new("Sound")
     sonidoFinal.SoundId = AUDIO_FINAL_CONTADOR
     sonidoFinal.Volume = 3
@@ -333,8 +335,13 @@ task.spawn(function()
     sonidoFinal.Parent = contenedorAudio
     sonidoFinal:Play()
 
-    task.wait(2) -- Pequeña pausa para dejar sonar el aviso final
+    task.wait(50) -- Espera exacta a que termine el segundo audio de aviso
     if sonidoFinal then sonidoFinal:Destroy() end
+
+    -- Activar el temblor justo ahora que los audios terminaron y la entidad va a aparecer
+    if _G.C25_Shared then
+        _G.C25_Shared.ActivarTemblor = true
+    end
 
     -- Sonido de movimiento nuevo en loop
     local sonidoMovimiento = Instance.new("Sound")
@@ -438,6 +445,5 @@ task.spawn(function()
 
     if entidad then entidad:Destroy() end
     _G.C25_Shared = nil
-    print("[SISTEMA] C-25 completó su recorrido mediante el escaneo de habitaciones y se ha eliminado.")
+    print("[SISTEMA] C-25 (God) completó su recorrido mediante el escaneo de habitaciones y se ha eliminado.")
 end)
-
