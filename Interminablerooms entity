@@ -255,7 +255,7 @@ local function mostrarNotificacionLogro()
     textoTitulo.TextSize = 14
     textoTitulo.Font = Enum.Font.GothamMedium
     textoTitulo.TextXAlignment = Enum.TextXAlignment.Left
-    textoTitulo.Text = "I want to be free again..."
+    textoTitulo.Text = "Trapped in hell"
     textoTitulo.Parent = frame
 
     local textoSub = Instance.new("TextLabel")
@@ -266,7 +266,7 @@ local function mostrarNotificacionLogro()
     textoSub.TextSize = 12
     textoSub.Font = Enum.Font.Gotham
     textoSub.TextXAlignment = Enum.TextXAlignment.Left
-    textoSub.Text = "Maybe it wasn't so fast after all, heh..."
+    textoSub.Text = "You should have let yourself die for paradise"
     textoSub.Parent = frame
 
     local textoLogro = Instance.new("TextLabel")
@@ -277,7 +277,7 @@ local function mostrarNotificacionLogro()
     textoLogro.TextSize = 13
     textoLogro.Font = Enum.Font.GothamBold
     textoLogro.TextXAlignment = Enum.TextXAlignment.Left
-    textoLogro.Text = "Survive C-25"
+    textoLogro.Text = "Survive God"
     textoLogro.Parent = frame
     
     local sonidoLogro = Instance.new("Sound")
@@ -322,7 +322,7 @@ task.spawn(function()
     sonidoContador.Parent = contenedorAudio
     sonidoContador:Play()
 	
-	task.wait(55) 
+	task.wait(50) 
     if sonidoContador then sonidoContador:Destroy() end
 
     -- Sonido cuando se acaba el contador a velocidad 0.1
